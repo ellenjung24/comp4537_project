@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Registration Page</title>
+    <link rel="stylesheet" type="text/css" href="register.css">
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const registrationForm = document.getElementById('registrationForm');
+            const registerButton = document.getElementById('registerButton');
+
+            registerButton.onclick = function (e) {
+                e.preventDefault();
+                const username = document.getElementById('registerUsername').value;
+                const password = document.getElementById('registerPassword').value;
+                const role = document.getElementById('registerRole').value;
+                const xhr = new XMLHttpRequest();
+                xhr.withCredentials = true;
+
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === XMLHttpRequest.DONE) {
+                        if (xhr.status === 200) {
+                            alert('Registration successful! Please login.');
+                            window.location.href = "login.html";
+                        } else {
+                            alert('Registration failed: ' + xhr.responseText);
+                        }
+                    }
+                };
+                xhr.open('POST', 'http://localhost:3000/register', true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.send(JSON.stringify({ username, password, role }));
+            };
+        });
+    </script>
+</head>
+
+<body class="body">
+    <div class="container">
+        <div class="login-page">
+            <div class="form">
+                <form id="registrationForm" class="register-form">
+                    <label for="registerUsername">Username:</label>
+                    <input type="text" id="registerUsername" name="username" required>
+                    <label for="registerPassword">Password:</label>
+                    <input type="password" id="registerPassword" name="password" required>
+                    <label for="registerRole">Role:</label>
+                    <select id="registerRole" name="role" required>
+                        <option value="user">User</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                    <button id="registerButton">Register</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

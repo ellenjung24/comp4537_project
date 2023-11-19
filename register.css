@@ -1,0 +1,43 @@
+@import url(https://fonts.googleapis.com/css?family=Roboto:300);
+
+body {
+  background-image: url('https://ordinaryfaith.net/wp-content/uploads/2016/03/Gray-plain-website-background.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  font-family: 'Roboto', sans-serif;
+}
+
+.container {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 1em;
+}
+
+.form {
+  background-color: #ffffff;
+  padding: 1em;
+  border-radius: 10px;
+}
+
+.form input {
+  display: block;
+  width: 100%;
+  padding: 0.5em;
+  margin-bottom: 1em;
+  font-family: 'Roboto', sans-serif;
+}
+
+.form button {
+  padding: 0.5em 1em;
+  background-color: #17a589;
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+  display: block;
+  width: 100%;
+}
+
+.form button:hover {
+  background-color: #148f77;
+}

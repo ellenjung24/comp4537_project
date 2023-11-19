@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login Page</title>
+  <link rel="stylesheet" type="text/css" href="login.css">
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const loginForm = document.getElementById('loginForm');
+    const logoutLabel = document.getElementById('logoutLabel');
+    const getSomethingButton = document.getElementById('getSomething');
+    const loginButton = document.getElementById('loginButton');
+
+    loginButton.onclick = function(e) {
+      e.preventDefault();
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const xhr = new XMLHttpRequest();
+      xhr.withCredentials = true;
+      
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+          if (xhr.status === 200) {
+            const response = JSON.parse(xhr.responseText);
+            if(response.role === 'admin')
+                window.location.href = "admin.html";
+            else
+                window.location.href = "user.html";
+          } else {
+            alert('Login failed: ' + xhr.responseText);
+          }
+        }
+      };
+      xhr.open('POST', 'http://localhost:3000/login', true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.send(JSON.stringify({ username, password }));
+    };
+
+    logoutLabel.onclick = function() {
+      loginForm.style.display = 'block';
+      logoutLabel.style.display = 'none';
+    };
+
+    getSomethingButton.onclick = function() {
+      const xhr = new XMLHttpRequest();
+      xhr.withCredentials = true;
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+          alert(xhr.responseText);
+        }
+      };
+      xhr.open('GET', 'http://localhost:3000/something', true);
+      xhr.send();
+    };
+
+    logoutLabel.style.display = 'none';
+    getSomethingButton.style.display = 'block';
+  });
+  </script>
+</head>
+<body>
+  <div id="loginContainer" class="login-page">
+    <form id="loginForm" class="form">
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username" required>
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" required>
+      <button id="loginButton">Login</button>
+    </form>
+    <label id="logoutLabel" style="display:none; cursor:pointer;"></label>
+  </div>
+
+  <button id="getSomething" style="display:block;">Get Something</button>
+</body>
+</html>
