@@ -1,5 +1,5 @@
 const http = require('http');
-let usersData = []; // To store regular user data in memory
+let usersData = [ { username: 'john', password: '123', role: 'user' } ]; // To store regular user data in memory
 let adminData = { username: 'admin', password: '111' }; // Admin credentials
 
 const server = http.createServer((req, res) => {
@@ -61,23 +61,27 @@ const server = http.createServer((req, res) => {
             });
             res.end(JSON.stringify({ message: 'Login successful', role: 'user' }));
           } else {
-            res.writeHead(401);
+            res.writeHead(401, {
+              'Content-Type': 'application/json',
+            });
             res.end(JSON.stringify({ message: 'Invalid credentials' }));
           }
         }
       } catch (e) {
-        res.writeHead(400);
+        res.writeHead(400, {
+          'Content-Type': 'application/json',
+        });
         res.end(JSON.stringify({ message: 'Invalid request' }));
       }
     });
   }
 
-  if (req.url === '/something' && req.method === 'GET') {
-    res.writeHead(200, {
-      'Content-Type': 'application/json',
-    });
-    res.end(JSON.stringify({ message: 'Here is something' }));
-  }
+  // if (req.url === '/something' && req.method === 'GET') {
+  //   res.writeHead(200, {
+  //     'Content-Type': 'application/json',
+  //   });
+  //   res.end(JSON.stringify({ message: 'Here is something' }));
+  // }
 
 });
 
