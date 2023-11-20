@@ -4,7 +4,7 @@ let adminData = { username: "admin", password: "111" }; // Admin credentials
 
 const server = http.createServer((req, res) => {
   console.log("Request origin:", req.headers.origin);
-  res.setHeader("Access-Control-Allow-Origin", "https://brave-ground-056b09a1e.4.azurestaticapps.net/html/login.html");
+  res.setHeader("Access-Control-Allow-Origin", "https://brave-ground-056b09a1e.4.azurestaticapps.net");
   res.setHeader("Access-Control-Allow-Credentials", "true");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
