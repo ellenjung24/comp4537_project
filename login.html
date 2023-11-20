@@ -30,7 +30,7 @@
             }
           }
         };
-        xhr.open('POST', 'http://localhost:3000/login', true);
+        xhr.open('POST', 'https://comp4537-project.onrender.com/login', true);
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.send(JSON.stringify({ username, password }));
       };
@@ -52,7 +52,7 @@
             }
           }
         };
-        xhr.open('POST', 'http://localhost:3000/reset', true);
+        xhr.open('POST', 'https://comp4537-project.onrender.com/reset', true);
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.send(JSON.stringify({ username }));
       };
@@ -66,8 +66,8 @@
     <form id="loginForm" class="form">
       <input type="text" id="username" name="username" placeholder="Username">
       <input type="password" id="password" name="password" placeholder="Password" required>
+      <p id="forgotPasswordButton">Forgot password?</p>
       <button id="loginButton">LOGIN</button>
-      <button id="forgotPasswordButton">FORGOT PASSWORD</button>
     </form>
     <p id="newPasswordDisplay" style="display:none; color: white;"></p>
   </div>
