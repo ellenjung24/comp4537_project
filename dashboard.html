@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <link id="dashboardStyle" rel="stylesheet" type="text/css">
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var role = localStorage.getItem('role');
+            var dashboardTitle = document.getElementById('dashboardTitle');
+            var dashboardStyle = document.getElementById('dashboardStyle');
+
+            if (role === 'admin') {
+                dashboardTitle.innerText = 'Welcome, Admin!';
+                dashboardStyle.href = 'admin.css';
+            } else {
+                dashboardTitle.innerText = 'Welcome, User!';
+                dashboardStyle.href = 'user.css';
+            }
+        });
+    </script>
+</head>
+
+<body>
+    <div class="dashboard">
+        <h1 id="dashboardTitle"></h1>
+        <p>You have successfully logged into the dashboard.</p>
+        <a href="login.html">Logout</a>
+    </div>
+</body>
+
+</html>

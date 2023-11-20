@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Login Page</title>
@@ -10,22 +11,20 @@
       const loginButton = document.getElementById('loginButton');
       const forgotPasswordButton = document.getElementById('forgotPasswordButton');
       const newPasswordDisplay = document.getElementById('newPasswordDisplay');
-  
+
       loginButton.onclick = function (e) {
         e.preventDefault();
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
         const xhr = new XMLHttpRequest();
         xhr.withCredentials = true;
-  
+
         xhr.onreadystatechange = function () {
           if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status === 200) {
               const response = JSON.parse(xhr.responseText);
-              if (response.role === 'admin')
-                window.location.href = "admin.html";
-              else
-                window.location.href = "user.html";
+              localStorage.setItem('role', response.role); // save role to localStorage
+              window.location.href = "dashboard.html"; // redirect to the combined dashboard page
             } else {
               alert('Login failed: ' + xhr.responseText);
             }
@@ -41,7 +40,7 @@
         const username = document.getElementById('username').value;
         const xhr = new XMLHttpRequest();
         xhr.withCredentials = true;
-  
+
         xhr.onreadystatechange = function () {
           if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status === 200) {
@@ -60,6 +59,7 @@
     });
   </script>
 </head>
+
 <body>
   <div id="loginContainer" class="login-page">
     <p id="formTitle">Member Login</p>
@@ -72,4 +72,5 @@
     <p id="newPasswordDisplay" style="display:none; color: white;"></p>
   </div>
 </body>
+
 </html>
