@@ -5,57 +5,59 @@
   <title>Login Page</title>
   <link rel="stylesheet" type="text/css" href="login.css">
   <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const loginForm = document.getElementById('loginForm');
-    // const logoutLabel = document.getElementById('logoutLabel');
-    // const getSomethingButton = document.getElementById('getSomething');
-    const loginButton = document.getElementById('loginButton');
-
-    loginButton.onclick = function(e) {
-      e.preventDefault();
-      const username = document.getElementById('username').value;
-      const password = document.getElementById('password').value;
-      const xhr = new XMLHttpRequest();
-      xhr.withCredentials = true;
-      
-      xhr.onreadystatechange = function() {
-        if (xhr.readyState === XMLHttpRequest.DONE) {
-          if (xhr.status === 200) {
-            const response = JSON.parse(xhr.responseText);
-            if(response.role === 'admin')
+    document.addEventListener('DOMContentLoaded', function () {
+      const loginForm = document.getElementById('loginForm');
+      const loginButton = document.getElementById('loginButton');
+      const forgotPasswordButton = document.getElementById('forgotPasswordButton');
+      const newPasswordDisplay = document.getElementById('newPasswordDisplay');
+  
+      loginButton.onclick = function (e) {
+        e.preventDefault();
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const xhr = new XMLHttpRequest();
+        xhr.withCredentials = true;
+  
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status === 200) {
+              const response = JSON.parse(xhr.responseText);
+              if (response.role === 'admin')
                 window.location.href = "admin.html";
-            else
+              else
                 window.location.href = "user.html";
-          } else {
-            alert('Login failed: ' + xhr.responseText);
+            } else {
+              alert('Login failed: ' + xhr.responseText);
+            }
           }
-        }
+        };
+        xhr.open('POST', 'http://localhost:3000/login', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify({ username, password }));
       };
-      xhr.open('POST', 'http://localhost:3000/login', true);
-      xhr.setRequestHeader('Content-Type', 'application/json');
-      xhr.send(JSON.stringify({ username, password }));
-    };
 
-    // logoutLabel.onclick = function() {
-    //   loginForm.style.display = 'block';
-    //   logoutLabel.style.display = 'none';
-    // };
-
-    // getSomethingButton.onclick = function() {
-    //   const xhr = new XMLHttpRequest();
-    //   xhr.withCredentials = true;
-    //   xhr.onreadystatechange = function() {
-    //     if (xhr.readyState === XMLHttpRequest.DONE) {
-    //       alert(xhr.responseText);
-    //     }
-    //   };
-    //   xhr.open('GET', 'http://localhost:3000/something', true);
-    //   xhr.send();
-    // };
-
-    // logoutLabel.style.display = 'none';
-    // getSomethingButton.style.display = 'block';
-  });
+      forgotPasswordButton.onclick = function (e) {
+        e.preventDefault();
+        const username = document.getElementById('username').value;
+        const xhr = new XMLHttpRequest();
+        xhr.withCredentials = true;
+  
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status === 200) {
+              const response = JSON.parse(xhr.responseText);
+              newPasswordDisplay.textContent = 'Your new password is: ' + response.newPassword;
+              newPasswordDisplay.style.display = 'block';
+            } else {
+              alert('Password reset failed: ' + xhr.responseText);
+            }
+          }
+        };
+        xhr.open('POST', 'http://localhost:3000/reset', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify({ username }));
+      };
+    });
   </script>
 </head>
 <body>
@@ -65,10 +67,9 @@
       <input type="text" id="username" name="username" placeholder="Username">
       <input type="password" id="password" name="password" placeholder="Password" required>
       <button id="loginButton">LOGIN</button>
+      <button id="forgotPasswordButton">FORGOT PASSWORD</button>
     </form>
-    <!-- <label id="logoutLabel" style="display:none; cursor:pointer;"></label> -->
+    <p id="newPasswordDisplay" style="display:none; color: white;"></p>
   </div>
-
-  <!-- <button id="getSomething" style="display:block;">Get Something</button> -->
 </body>
 </html>
