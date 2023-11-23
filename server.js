@@ -1,6 +1,24 @@
 const http = require("http");
+const mysql = require("mysql2");
+
 let usersData = [{ username: "john", password: "123", role: "user" }]; // To store regular user data in memory
 let adminData = { username: "admin", password: "111" }; // Admin credentials
+
+const db = mysql.createConnection({
+  host: 'localhost',
+  user: 'nhinguye_nhinguyen',
+  password: 'nhinguyencomp4537',
+  database: 'nhinguye_comp4537lab6'
+});
+
+db.connect((err) => {
+  if (err) {
+    throw err;
+  }
+  console.log('Connected to the database');
+});
+
+
 
 const server = http.createServer((req, res) => {
   console.log("Request origin:", req.headers.origin);
