@@ -1,60 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Registration Page</title>
-    <link rel="stylesheet" type="text/css" href="../css/register.css" />
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const registrationForm = document.getElementById("registrationForm");
-        const registerButton = document.getElementById("registerButton");
 
-        registerButton.onclick = function (e) {
-          e.preventDefault();
-          const username = document.getElementById("registerUsername").value;
-          const password = document.getElementById("registerPassword").value;
-        //   const role = document.getElementById("registerRole").value;
-          const role = document.querySelector('input[name="role"]:checked').value;
-          const xhr = new XMLHttpRequest();
-          xhr.withCredentials = true;
+<head>
+  <meta charset="UTF-8" />
+  <title>Registration Page</title>
+  <link rel="stylesheet" type="text/css" href="../css/register.css" />
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const registrationForm = document.getElementById("registrationForm");
+      const registerButton = document.getElementById("registerButton");
 
-          xhr.onreadystatechange = function () {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-              if (xhr.status === 200) {
-                alert("Registration successful! Please login.");
-                window.location.href = "login.html";
-              } else {
-                alert("Registration failed: " + xhr.responseText);
-              }
+      registerButton.onclick = function (e) {
+        e.preventDefault();
+        const username = document.getElementById("registerUsername").value;
+        const password = document.getElementById("registerPassword").value;
+        const email = document.getElementById("registerEmail").value;
+        const role = document.querySelector('input[name="role"]:checked').value;
+        const xhr = new XMLHttpRequest();
+        xhr.withCredentials = true;
+
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status === 200) {
+              const response = JSON.parse(xhr.responseText);
+              window.location.href = "login.html";
+            } else {
+              alert("Registration failed: " + xhr.responseText);
             }
-          };
-          xhr.open("POST", "https://nhi-nguyennn.com/COMP4537/project/server/register", true);
-          xhr.setRequestHeader("Content-Type", "application/json");
-          xhr.send(JSON.stringify({ username, password, role }));
+          }
         };
-      });
-    </script>
-  </head>
+        xhr.open("POST", "http://localhost:3000/register", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.send(JSON.stringify({ username, password, role, email }));
+      };
+    });
+  </script>
+</head>
 
-  <body class="body">
-    <div class="container">
-      <p id="formTitle">Member Register</p>
-      <form id="registrationForm" class="register-form">
-        <input class="inputFields" id="registerUsername" name="username" placeholder="Username" required />
-        <input class="inputFields" type="password" id="registerPassword" name="password" placeholder="Password" required />
-        <!-- <label for="registerRole">Role:</label> -->
-        <!-- <select id="registerRole" name="role" required>
-          <option value="user">User</option>
-          <option value="admin">Admin</option>
-        </select> -->
-        <p id="roleTitle">Role:</p>
-        <br>
-        <input class="radioButtons" type="radio" id="userRole" name="role" value="user" required checked />
-        <label class="radioButtonLabels" for="userRole">User</label><br/>
-        <input class="radioButtons" type="radio" id="adminRole" name="role" value="admin" required />
-        <label class="radioButtonLabels" for="adminRole">Admin</label>
-        <button id="registerButton">REGISTER</button>
-      </form>
-    </div>
-  </body>
+<body class="body">
+  <div class="container">
+    <p id="formTitle">Member Register</p>
+    <form id="registrationForm" class="register-form">
+      <input class="inputFields" id="registerUsername" name="username" placeholder="Username" required />
+      <input class="inputFields" type="password" id="registerPassword" name="password" placeholder="Password"
+        required />
+      <input class="inputFields" id="registerEmail" name="email" placeholder="Email"
+        required />
+      <p id="roleTitle">Role:</p>
+      <br>
+      <input class="radioButtons" type="radio" id="userRole" name="role" value="user" required checked />
+      <label class="radioButtonLabels" for="userRole">User</label><br />
+      <input class="radioButtons" type="radio" id="adminRole" name="role" value="admin" required />
+      <label class="radioButtonLabels" for="adminRole">Admin</label>
+      <button id="registerButton">REGISTER</button>
+    </form>
+  </div>
+</body>
+
 </html>

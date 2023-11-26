@@ -14,6 +14,7 @@
 
       loginButton.onclick = function (e) {
         e.preventDefault();
+        // This value can either be a username or an email
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
         const xhr = new XMLHttpRequest();
@@ -23,14 +24,17 @@
           if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status === 200) {
               const response = JSON.parse(xhr.responseText);
+              localStorage.setItem('username', response.username); // save username to localStorage
               localStorage.setItem('role', response.role); // save role to localStorage
+              // Save JWT to localStorage
+              localStorage.setItem('token', response.token); // save token to localStorage
               window.location.href = "index.html"; // redirect to the combined dashboard page
             } else {
               alert('Login failed: ' + xhr.responseText);
             }
           }
         };
-        xhr.open('POST', 'https://nhi-nguyennn.com/COMP4537/project/server/login', true);
+        xhr.open('POST', 'http://localhost:3000/login', true);
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.send(JSON.stringify({ username, password }));
       };
@@ -52,7 +56,7 @@
             }
           }
         };
-        xhr.open('POST', 'https://nhi-nguyennn.com/COMP4537/project/server/reset', true);
+        xhr.open('POST', 'http://localhost:3000/reset', true);
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.send(JSON.stringify({ username }));
       };
@@ -64,7 +68,7 @@
   <div id="loginContainer" class="login-page">
     <p id="formTitle">Member Login</p>
     <form id="loginForm" class="form">
-      <input type="text" id="username" name="username" placeholder="Username">
+      <input type="text" id="username" name="username" placeholder="Username or Email">
       <input type="password" id="password" name="password" placeholder="Password" required>
       <p id="forgotPasswordButton">Forgot password?</p>
       <button id="loginButton">LOGIN</button>
