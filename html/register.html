@@ -15,7 +15,8 @@
         const username = document.getElementById("registerUsername").value;
         const password = document.getElementById("registerPassword").value;
         const email = document.getElementById("registerEmail").value;
-        const role = document.querySelector('input[name="role"]:checked').value;
+        // const role = document.querySelector('input[name="role"]:checked').value;
+        const role = "user"; // Default role is "user"
         const xhr = new XMLHttpRequest();
         xhr.withCredentials = true;
 
@@ -46,12 +47,12 @@
         required />
       <input class="inputFields" id="registerEmail" name="email" placeholder="Email"
         required />
-      <p id="roleTitle">Role:</p>
+      <!-- <p id="roleTitle">Role:</p> -->
       <br>
-      <input class="radioButtons" type="radio" id="userRole" name="role" value="user" required checked />
+      <!-- <input class="radioButtons" type="radio" id="userRole" name="role" value="user" required checked />
       <label class="radioButtonLabels" for="userRole">User</label><br />
       <input class="radioButtons" type="radio" id="adminRole" name="role" value="admin" required />
-      <label class="radioButtonLabels" for="adminRole">Admin</label>
+      <label class="radioButtonLabels" for="adminRole">Admin</label> -->
       <button id="registerButton">REGISTER</button>
     </form>
   </div>

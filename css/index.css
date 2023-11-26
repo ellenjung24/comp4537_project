@@ -1,0 +1,48 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+#navBar {
+    background-color: #f8f9fa;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #dee2e6;
+}
+
+#navBar p {
+    margin: 0;
+}
+
+#navBar a {
+    text-decoration: none;
+    color: #007bff;
+}
+
+.dashboard {
+    padding: 20px;
+}
+
+.dashboard h1 {
+    color: #495057;
+}
+
+#adminDataTable {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#adminDataTable th,
+#adminDataTable td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+#adminDataTable th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #4CAF50;
+    color: white;
+}

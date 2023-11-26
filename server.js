@@ -2,10 +2,7 @@ require("dotenv").config();
 const http = require("http");
 const mysql = require("mysql2");
 const bcrypt = require("bcrypt");
-const express = require("express");
-// const cors = require("cors");
 const jwt = require("jsonwebtoken");
-// const app = express();
 
 // Create database sql
 // CREATE TABLE new_users (
@@ -33,32 +30,32 @@ db.connect((err) => {
   console.log("Connected to database");
 });
 
-// function checkApiCalls(req, res, next) {
-//   const authHeader = req.headers.authorization;
-//   if (authHeader) {
-//     const token = authHeader.split(" ")[1];
-//     jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-//       if (err) {
-//         return res.sendStatus(403);
-//       }
+function checkApiCalls(req, res, next) {
+  const authHeader = req.headers.authorization;
+  if (authHeader) {
+    const token = authHeader.split(" ")[1];
+    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+      if (err) {
+        return res.sendStatus(403);
+      }
 
-//       let query = `SELECT api_calls FROM users WHERE username = ?`;
-//       db.query(query, [user.username], (err, results) => {
-//         if (err) throw err;
-//         if (results[0].api_calls >= 20 && user.role !== "admin") {
-//           res.writeHead(429, {
-//             "Content-Type": "application/json",
-//           });
-//           res.end(JSON.stringify({ message: "API usage limit reached" }));
-//         } else {
-//           next();
-//         }
-//       });
-//     });
-//   } else {
-//     next();
-//   }
-// }
+      let query = `SELECT api_calls FROM users WHERE username = ?`;
+      db.query(query, [user.username], (err, results) => {
+        if (err) throw err;
+        if (results[0].api_calls >= 20 && user.role !== "admin") {
+          res.writeHead(429, {
+            "Content-Type": "application/json",
+          });
+          res.end(JSON.stringify({ message: "API usage limit reached" }));
+        } else {
+          next();
+        }
+      });
+    });
+  } else {
+    next();
+  }
+}
 
 const server = http.createServer((req, res) => {
   console.log("Request origin:", req.headers.origin);
@@ -66,6 +63,23 @@ const server = http.createServer((req, res) => {
   res.setHeader("Access-Control-Allow-Credentials", "true");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+
+  console.log("Request origin:", req.headers.origin);
+
+  // Increment API call count for each user on each request
+  const authHeader = req.headers.authorization;
+  if (authHeader) {
+    const token = authHeader.split(" ")[1];
+    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+      if (err) {
+        return res.sendStatus(403);
+      }
+      let query = `UPDATE users SET api_calls = api_calls + 1 WHERE username = ?`;
+      db.query(query, [user.username], (err, results) => {
+        if (err) throw err;
+      });
+    });
+  }
 
   if (req.method === "OPTIONS") {
     res.writeHead(204);
@@ -110,11 +124,10 @@ const server = http.createServer((req, res) => {
     });
     req.on("end", () => {
       try {
-        const { username, password } = JSON.parse(body); // Change usernameOrEmail to username
+        const { username, password } = JSON.parse(body);
 
         let query = `SELECT * FROM users WHERE username = ? OR email = ?`;
         db.query(query, [username, username], (err, results) => {
-          // Here we are checking if the username or email matches the user input
           if (err) throw err;
           if (results.length > 0) {
             // Compare password with hash
@@ -130,6 +143,17 @@ const server = http.createServer((req, res) => {
                     expiresIn: "1h",
                   }
                 );
+
+                // Increment API call count for user
+                let updateQuery = `UPDATE users SET api_calls = api_calls + 1 WHERE username = ?`;
+                db.query(updateQuery, [username], (err, results) => {
+                  if (err) throw err;
+                });
+
+                res.setHeader(
+                  "Set-Cookie",
+                  `token=${token}; HttpOnly; Path=/;`
+                );
                 res.writeHead(200, {
                   "Content-Type": "application/json",
                 });
@@ -138,7 +162,6 @@ const server = http.createServer((req, res) => {
                     message: `Login successful, role: ${userRole}`,
                     username,
                     role: userRole,
-                    token,
                   })
                 );
               } else {
@@ -162,42 +185,6 @@ const server = http.createServer((req, res) => {
         res.end(JSON.stringify({ message: "Invalid request" }));
       }
     });
-  }
-
-  if (req.url === "/api/admin/stats" && req.method === "GET") {
-    const authHeader = req.headers.authorization;
-    if (authHeader) {
-      const token = authHeader.split(" ")[1];
-      jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-        if (err) {
-          res.writeHead(403, {
-            "Content-Type": "application/json",
-          });
-          res.end(JSON.stringify({ message: "Unauthorized" }));
-          return;
-        }
-        if (user.role !== "admin") {
-          res.writeHead(403, {
-            "Content-Type": "application/json",
-          });
-          res.end(JSON.stringify({ message: "Forbidden" }));
-          return;
-        }
-        let query = `SELECT userid, COUNT(*) as count FROM api_calls GROUP BY userid`;
-        db.query(query, (err, results) => {
-          if (err) throw err;
-          res.writeHead(200, {
-            "Content-Type": "application/json",
-          });
-          res.end(JSON.stringify(results));
-        });
-      });
-    } else {
-      res.writeHead(403, {
-        "Content-Type": "application/json",
-      });
-      res.end(JSON.stringify({ message: "Unauthorized" }));
-    }
   }
 
   function generatePassword() {
@@ -250,6 +237,44 @@ const server = http.createServer((req, res) => {
           "Content-Type": "application/json",
         });
         res.end(JSON.stringify({ message: "Invalid request" }));
+      }
+    });
+  }
+
+  if (req.url === "/api/admin/data" && req.method === "GET") {
+    checkApiCalls(req, res, () => {
+      const authHeader = req.headers.authorization;
+      if (authHeader) {
+        const token = authHeader.split(" ")[1];
+        jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+          if (err) {
+            res.writeHead(403, {
+              "Content-Type": "application/json",
+            });
+            res.end(JSON.stringify({ message: "Unauthorized" }));
+            return;
+          }
+          if (user.role !== "admin") {
+            res.writeHead(403, {
+              "Content-Type": "application/json",
+            });
+            res.end(JSON.stringify({ message: "Forbidden" }));
+            return;
+          }
+          let query = `SELECT username, api_calls FROM users`;
+          db.query(query, (err, results) => {
+            if (err) throw err;
+            res.writeHead(200, {
+              "Content-Type": "application/json",
+            });
+            res.end(JSON.stringify(results));
+          });
+        });
+      } else {
+        res.writeHead(403, {
+          "Content-Type": "application/json",
+        });
+        res.end(JSON.stringify({ message: "Unauthorized" }));
       }
     });
   }

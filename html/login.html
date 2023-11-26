@@ -9,36 +9,37 @@
     document.addEventListener('DOMContentLoaded', function () {
       const loginForm = document.getElementById('loginForm');
       const loginButton = document.getElementById('loginButton');
+      const registerButton = document.getElementById('registerButton');
       const forgotPasswordButton = document.getElementById('forgotPasswordButton');
       const newPasswordDisplay = document.getElementById('newPasswordDisplay');
 
-      loginButton.onclick = function (e) {
+      loginButton.addEventListener('click', function (e) {
         e.preventDefault();
-        // This value can either be a username or an email
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
-        const xhr = new XMLHttpRequest();
-        xhr.withCredentials = true;
 
-        xhr.onreadystatechange = function () {
-          if (xhr.readyState === XMLHttpRequest.DONE) {
-            if (xhr.status === 200) {
-              const response = JSON.parse(xhr.responseText);
-              localStorage.setItem('username', response.username); // save username to localStorage
-              localStorage.setItem('role', response.role); // save role to localStorage
-              // Save JWT to localStorage
-              localStorage.setItem('token', response.token); // save token to localStorage
-              window.location.href = "index.html"; // redirect to the combined dashboard page
-            } else {
-              alert('Login failed: ' + xhr.responseText);
-            }
-          }
-        };
-        xhr.open('POST', 'http://localhost:3000/login', true);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.send(JSON.stringify({ username, password }));
-      };
-
+        fetch('http://localhost:3000/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include', // To send cookies with the request.
+          body: JSON.stringify({ username, password })
+        })
+          .then(response => {
+            if (!response.ok) throw new Error(response.statusText);
+            return response.json();
+          })
+          .then(data => {
+            localStorage.setItem('username', data.username);
+            localStorage.setItem('role', data.role);
+            localStorage.setItem('token', data.token);
+            window.location.href = "index.html";
+          })
+          .catch(error => {
+            alert('Login failed: ' + error);
+          });
+      });
       forgotPasswordButton.onclick = function (e) {
         e.preventDefault();
         const username = document.getElementById('username').value;
@@ -60,6 +61,9 @@
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.send(JSON.stringify({ username }));
       };
+      registerButton.onclick = function () {
+        window.location.href = "register.html";
+      };
     });
   </script>
 </head>
@@ -70,6 +74,8 @@
     <form id="loginForm" class="form">
       <input type="text" id="username" name="username" placeholder="Username or Email">
       <input type="password" id="password" name="password" placeholder="Password" required>
+      <p id="registerButton">Register</p>
+      <div style="clear: both;"></div>
       <p id="forgotPasswordButton">Forgot password?</p>
       <button id="loginButton">LOGIN</button>
     </form>

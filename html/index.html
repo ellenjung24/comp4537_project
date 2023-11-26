@@ -5,43 +5,12 @@
     <meta charset="UTF-8">
     <title>Dashboard</title>
     <link id="dashboardStyle" rel="stylesheet" type="text/css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-
-        #navBar {
-            background-color: #f8f9fa;
-            padding: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #dee2e6;
-        }
-
-        #navBar p {
-            margin: 0;
-        }
-
-        #navBar a {
-            text-decoration: none;
-            color: #007bff;
-        }
-
-        .dashboard {
-            padding: 20px;
-        }
-
-        .dashboard h1 {
-            color: #495057;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="../css/index.css">
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             let token = localStorage.getItem('token');
             let username = localStorage.getItem('username');
             let role = localStorage.getItem('role');
-            let dashboardTitle = document.getElementById('dashboardTitle');
             let navBar = document.getElementById('navBar');
             let bodyContent = document.querySelector('.dashboard > p');
 
@@ -51,20 +20,21 @@
                     <a href="login.html" onclick="localStorage.clear()">Logout</a>
                 `;
                 bodyContent.innerText = 'You have successfully logged into the dashboard.';
-                let xhr = new XMLHttpRequest();
-                xhr.onreadystatechange = function () {
-                    if (xhr.readyState === XMLHttpRequest.DONE) {
-                        if (xhr.status === 200) {
-                            const data = JSON.parse(xhr.responseText);
-                            // Display the data in some way, e.g., in the bodyContent element
-                        } else {
-                            alert('Failed to fetch user data: ' + xhr.responseText);
-                        }
-                    }
-                };
-                xhr.open('GET', 'http://localhost:3000/api/user/data', true);
-                xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-                xhr.send();
+
+                // Fetch data from /api/user/data
+                // let xhr = new XMLHttpRequest();
+                // xhr.onreadystatechange = function () {
+                //     if (xhr.readyState === XMLHttpRequest.DONE) {
+                //         if (xhr.status === 200) {
+                //             /* handle response data */
+                //         } else {
+                //             alert('Failed to fetch user data: ' + xhr.responseText);
+                //         }
+                //     }
+                // };
+                // xhr.open('GET', 'http://localhost:3000/api/user/data', true);
+                // xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+                // xhr.send();
 
                 if (role === 'admin') {
                     // Fetch data from /api/admin/data
@@ -73,8 +43,12 @@
                         if (xhrAdmin.readyState === XMLHttpRequest.DONE) {
                             if (xhrAdmin.status === 200) {
                                 const data = JSON.parse(xhrAdmin.responseText);
-                                let adminData = JSON.stringify(data, null, 2); // Formatting the JSON data as a string
-                                bodyContent.innerText += '\n\nAdmin Data:\n' + adminData; // Displaying the admin data as simple text
+                                let adminData = '<table id="adminDataTable"><tr><th>Username</th><th>API Calls</th></tr>';
+                                data.forEach(user => {
+                                    adminData += `<tr><td>${user.username}</td><td>${user.api_calls}</td></tr>`;
+                                });
+                                adminData += '</table>';
+                                bodyContent.innerHTML += '<h2>Admin Data:</h2>' + adminData;
                             } else {
                                 alert('Failed to fetch admin data: ' + xhrAdmin.responseText);
                             }

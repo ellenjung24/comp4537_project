@@ -86,15 +86,16 @@ html {
   margin-bottom: 0;
 }
 
-#forgotPasswordButton {
-  margin-top: 8px;
+#forgotPasswordButton, #registerButton {
+  margin-top: 8px; /* Adjust as needed */
   background: transparent;
   cursor: pointer;
   font-size: 13px;
   margin-bottom: 0;
+  display: block;
   float: left;
 }
 
-#forgotPasswordButton:hover {
+#forgotPasswordButton:hover, #registerButton:hover {
   border-bottom: white 1px solid;
 }
