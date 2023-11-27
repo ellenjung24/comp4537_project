@@ -43,9 +43,11 @@
                         if (xhrAdmin.readyState === XMLHttpRequest.DONE) {
                             if (xhrAdmin.status === 200) {
                                 const data = JSON.parse(xhrAdmin.responseText);
-                                let adminData = '<table id="adminDataTable"><tr><th>Username</th><th>API Calls</th></tr>';
+                                let adminData =
+                                    '<table id="adminDataTable"><tr><th>Username</th><th>API Calls</th></tr>';
                                 data.forEach(user => {
-                                    adminData += `<tr><td>${user.username}</td><td>${user.api_calls}</td></tr>`;
+                                    adminData +=
+                                        `<tr><td>${user.username}</td><td>${user.api_calls}</td></tr>`;
                                 });
                                 adminData += '</table>';
                                 bodyContent.innerHTML += '<h2>Admin Data:</h2>' + adminData;
@@ -54,7 +56,7 @@
                             }
                         }
                     };
-                    xhrAdmin.open('GET', 'https://nhi-nguyennn.com/COMP4537/project/server/api/admin/data', true);
+                    xhrAdmin.open('GET', 'http://nhi-nguyennn.com/COMP4537/textgenerator/api/admin/data', true);
                     xhrAdmin.setRequestHeader('Authorization', 'Bearer ' + token);
                     xhrAdmin.send();
                 }
@@ -63,6 +65,101 @@
                 bodyContent.innerText = 'You need to log in to see the content of the dashboard.';
             }
         });
+
+
+        function fetchStories() {
+            let xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        const data = JSON.parse(xhr.responseText);
+                        // Process and display the stories
+                        console.log(data);
+                        alert('Stories fetched successfully.');
+                    } else {
+                        console.error('Error fetching stories:', xhr.responseText);
+                        alert('Failed to fetch stories.');
+                    }
+                }
+            };
+            xhr.open('GET', 'https://nhi-nguyennn.com/COMP4537/textgenerator/stories', true);
+            xhr.send();
+        }
+
+        function addStory(title, content) {
+            let xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        const data = JSON.parse(xhr.responseText);
+                        console.log('Story added:', data);
+                    } else {
+                        console.error('Error adding story:', xhr.responseText);
+                        alert('Failed to add story.');
+
+                    }
+                }
+            };
+            xhr.open('POST', 'https://nhi-nguyennn.com/COMP4537/textgenerator/addstory', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.setRequestHeader('Authorization', 'Bearer ' + token); // Assuming token is required
+            xhr.send(JSON.stringify({
+                title,
+                story: content
+            }));
+        }
+
+        function updateStory(id, title, content) {
+            let xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        const data = JSON.parse(xhr.responseText);
+                        console.log('Story updated:', data);
+                        alert('Story updated successfully.');
+                    } else {
+                        console.error('Error updating story:', xhr.responseText);
+                        alert('Failed to update story.');
+                    }
+                }
+            };
+            xhr.open('PUT', `https://nhi-nguyennn.com/COMP4537/textgenerator/updatestory/${id}`, true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.setRequestHeader('Authorization', 'Bearer ' + token); // Assuming token is required
+            xhr.send(JSON.stringify({
+                title,
+                story: content
+            }));
+        }
+
+        function deleteStory(id) {
+            let xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        console.log('Story deleted');
+                        alert('Story deleted successfully.');
+                    } else {
+                        console.error('Error deleting story:', xhr.responseText);
+                        alert('Failed to delete story.');
+                    }
+                }
+            };
+            xhr.open('DELETE', `https://nhi-nguyennn.com/COMP4537/textgenerator/deletestory/${id}`,
+                true);
+            xhr.setRequestHeader('Authorization', 'Bearer ' + token); // Assuming token is required
+            xhr.send();
+        }
+
+        function getInputValue(inputId) {
+            return document.getElementById(inputId).value;
+        }
+
+        function getSelectedStoryId() {
+            return getInputValue('storyId');
+        }
+
+
     </script>
 </head>
 
@@ -73,7 +170,21 @@
     </nav>
     <div class="dashboard">
         <h1 id="dashboardTitle"></h1>
-        <p></p>
+        <div>
+            <button onclick="fetchStories()">Fetch Stories</button>
+        </div>
+        <div>
+            <input type="text" id="storyTitle" placeholder="Story Title">
+            <textarea id="storyContent" placeholder="Story Content"></textarea>
+            <button onclick="addStory(getInputValue('storyTitle'), getInputValue('storyContent'))">Add Story</button>
+            <button
+                onclick="updateStory(getSelectedStoryId(), getInputValue('storyTitle'), getInputValue('storyContent'))">Update
+                Story</button>
+        </div>
+        <div>
+            <input type="number" id="storyId" placeholder="Story ID">
+            <button onclick="deleteStory(getInputValue('storyId'))">Delete Story</button>
+        </div>
     </div>
 </body>
 
