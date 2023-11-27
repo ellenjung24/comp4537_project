@@ -31,6 +31,7 @@
             return response.json();
           })
           .then(data => {
+            console.log(data);
             localStorage.setItem('username', data.username);
             localStorage.setItem('role', data.role);
             localStorage.setItem('token', data.token);

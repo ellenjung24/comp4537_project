@@ -83,6 +83,7 @@
                 }
             };
             xhr.open('GET', 'https://nhi-nguyennn.com/COMP4537/textgenerator/stories', true);
+            xhr.setRequestHeader('Authorization', 'Bearer ' + token);
             xhr.send();
         }
 
@@ -102,7 +103,7 @@
             };
             xhr.open('POST', 'https://nhi-nguyennn.com/COMP4537/textgenerator/addstory', true);
             xhr.setRequestHeader('Content-Type', 'application/json');
-            xhr.setRequestHeader('Authorization', 'Bearer ' + token); // Assuming token is required
+            xhr.setRequestHeader('Authorization', 'Bearer ' + token);
             xhr.send(JSON.stringify({
                 title,
                 story: content
@@ -125,7 +126,7 @@
             };
             xhr.open('PUT', `https://nhi-nguyennn.com/COMP4537/textgenerator/updatestory/${id}`, true);
             xhr.setRequestHeader('Content-Type', 'application/json');
-            xhr.setRequestHeader('Authorization', 'Bearer ' + token); // Assuming token is required
+            xhr.setRequestHeader('Authorization', 'Bearer ' + token); 
             xhr.send(JSON.stringify({
                 title,
                 story: content
