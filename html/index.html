@@ -7,8 +7,14 @@
     <link id="dashboardStyle" rel="stylesheet" type="text/css">
     <link rel="stylesheet" type="text/css" href="../css/index.css">
     <script>
+           const token = document.cookie
+                .split('; ')
+                .find(row => row.startsWith('token='))
+                .split('=')[1];
+            console.log(token);
         document.addEventListener('DOMContentLoaded', function () {
-            let token = localStorage.getItem('token');
+            // let token = localStorage.getItem('token');
+         
             let username = localStorage.getItem('username');
             let role = localStorage.getItem('role');
             let navBar = document.getElementById('navBar');
@@ -126,7 +132,7 @@
             };
             xhr.open('PUT', `https://nhi-nguyennn.com/COMP4537/textgenerator/updatestory/${id}`, true);
             xhr.setRequestHeader('Content-Type', 'application/json');
-            xhr.setRequestHeader('Authorization', 'Bearer ' + token); 
+            xhr.setRequestHeader('Authorization', 'Bearer ' + token);
             xhr.send(JSON.stringify({
                 title,
                 story: content
@@ -159,8 +165,6 @@
         function getSelectedStoryId() {
             return getInputValue('storyId');
         }
-
-
     </script>
 </head>
 
