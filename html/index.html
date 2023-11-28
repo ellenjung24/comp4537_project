@@ -13,7 +13,7 @@
             let navBar = document.getElementById('navBar');
             let bodyContent = document.querySelector('.dashboard > p');
 
-            if (token) {
+            if (username && role) {
                 navBar.innerHTML = `
                     <p>Hello, ${username}!</p>
                     <a href="login.html" onclick="localStorage.clear()">Logout</a>
