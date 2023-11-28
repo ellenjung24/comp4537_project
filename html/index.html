@@ -7,6 +7,10 @@
     <link id="dashboardStyle" rel="stylesheet" type="text/css">
     <link rel="stylesheet" type="text/css" href="../css/index.css">
     <script>
+             const token = document.cookie
+                .split('; ')
+                .find(row => row.startsWith('token='))
+                .split('=')[1];
         document.addEventListener('DOMContentLoaded', function () {
             let username = localStorage.getItem('username');
             let role = localStorage.getItem('role');
@@ -68,6 +72,9 @@
         function fetchStories() {
             fetch('https://nhi-nguyennn.com/COMP4537/textgenerator/stories', {
                     method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    },
                     credentials: 'include' // Ensures cookies are sent with the request
                 })
                 .then(response => {
