@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Dashboard</title>
-    <link id="dashboardStyle" rel="stylesheet" type="text/css">
+    <!-- <link id="dashboardStyle" rel="stylesheet" type="text/css"> -->
     <link rel="stylesheet" type="text/css" href="../css/index.css">
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -19,7 +19,7 @@
                     <p>Hello, ${username}!</p>
                     <a href="login.html" onclick="localStorage.clear()">Logout</a>
                 `;
-                bodyContent.innerText = 'You have successfully logged into the dashboard.';
+                //bodyContent.innerText = 'You have successfully logged into the dashboard.';
 
                 // Fetch data from /api/user/data
                 // let xhr = new XMLHttpRequest();
@@ -67,61 +67,38 @@
         });
 
         function fetchStories() {
-            var myHeaders = new Headers();
-            myHeaders.append("Authorization",
-                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im5oaXRlc3QiLCJyb2xlIjoidXNlciIsInVzZXJpZCI6OCwiaWF0IjoxNzAxMTU3MzUzLCJleHAiOjE3MDExNjA5NTN9.KAidTYlprM4K5VFcbd61enhdTBjmPz1Dt4SlUPYlcRE"
-                );
-
-            var requestOptions = {
+            fetch('https://nhi-nguyennn.com/COMP4537/textgenerator/stories', {
                 method: 'GET',
-                headers: myHeaders,
-                redirect: 'follow'
-            };
-
-            fetch("https://nhi-nguyennn.com/COMP4537/textgenerator/stories", requestOptions)
+                credentials: 'include'
+            })
                 .then(response => {
-                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                    if (!response.ok) throw new Error(response.statusText);
                     return response.json();
                 })
-                .then(result => console.log(result))
-                .catch(error => console.log('error', error));
-
-
-
-
-
-            // fetch('https://nhi-nguyennn.com/COMP4537/textgenerator/stories', {
-            //         method: 'GET',
-            //         credentials: 'include' // Ensures cookies are sent with the request
-            //     })
-            //     .then(response => {
-            //         if (!response.ok) throw new Error(response.statusText);
-            //         return response.json();
-            //     })
-            //     .then(data => {
-            //         console.log(data);
-            //         alert('Stories fetched successfully.');
-            //     })
-            //     .catch(error => {
-            //         console.error('Error fetching stories:', error);
-            //         alert('Failed to fetch stories.');
-            //     });
+                .then(data => {
+                    console.log(data);
+                    alert('Stories fetched successfully.');
+                })
+                .catch(error => {
+                    console.error('Error fetching stories:', error);
+                    alert('Failed to fetch stories.');
+                });
         }
 
 
         // Example function to add a new story
         function addStory(title, content) {
             fetch('https://nhi-nguyennn.com/COMP4537/textgenerator/addstory', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    credentials: 'include',
-                    body: JSON.stringify({
-                        title,
-                        story: content
-                    })
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify({
+                    title,
+                    story: content
                 })
+            })
                 .then(response => {
                     if (!response.ok) throw new Error('Network response was not ok.');
                     return response.json();
@@ -135,17 +112,17 @@
         // Example function to update a story
         function updateStory(id, title, content) {
             fetch(`https://nhi-nguyennn.com/COMP4537/textgenerator/updatestory/${id}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
 
-                    },
-                    credentials: 'include',
-                    body: JSON.stringify({
-                        title,
-                        story: content
-                    })
+                },
+                credentials: 'include',
+                body: JSON.stringify({
+                    title,
+                    story: content
                 })
+            })
                 .then(response => response.json())
                 .then(data => {
                     console.log('Story updated:', data);
@@ -156,10 +133,10 @@
         // Example function to delete a story
         function deleteStory(id) {
             fetch(`https://nhi-nguyennn.com/COMP4537/textgenerator/deletestory/${id}`, {
-                    method: 'DELETE',
-                    headers: {},
-                    credentials: 'include'
-                })
+                method: 'DELETE',
+                headers: {},
+                credentials: 'include'
+            })
                 .then(response => {
                     if (!response.ok) throw new Error('Network response was not ok.');
                     console.log('Story deleted');
