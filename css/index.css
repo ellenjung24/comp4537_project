@@ -79,3 +79,7 @@ body {
 .input-group input, .input-group button {
     flex: 1;
 }
+
+.hidden {
+    display: none;
+}

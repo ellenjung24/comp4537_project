@@ -4,157 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Dashboard</title>
-    <!-- <link id="dashboardStyle" rel="stylesheet" type="text/css"> -->
     <link rel="stylesheet" type="text/css" href="../css/index.css">
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-
-            let username = localStorage.getItem('username');
-            let role = localStorage.getItem('role');
-            let navBar = document.getElementById('navBar');
-            let bodyContent = document.querySelector('.dashboard > p');
-
-            if (username && role) {
-                navBar.innerHTML = `
-                    <p>Hello, ${username}!</p>
-                    <a href="login.html" onclick="localStorage.clear()">Logout</a>
-                `;
-                //bodyContent.innerText = 'You have successfully logged into the dashboard.';
-
-                // Fetch data from /api/user/data
-                // let xhr = new XMLHttpRequest();
-                // xhr.onreadystatechange = function () {
-                //     if (xhr.readyState === XMLHttpRequest.DONE) {
-                //         if (xhr.status === 200) {
-                //             /* handle response data */
-                //         } else {
-                //             alert('Failed to fetch user data: ' + xhr.responseText);
-                //         }
-                //     }
-                // };
-                // xhr.open('GET', 'http://localhost:3000/api/user/data', true);
-                // xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-                // xhr.send();
-
-                if (role === 'admin') {
-                    // Fetch data from /api/admin/data
-                    let xhrAdmin = new XMLHttpRequest();
-                    xhrAdmin.onreadystatechange = function () {
-                        if (xhrAdmin.readyState === XMLHttpRequest.DONE) {
-                            if (xhrAdmin.status === 200) {
-                                const data = JSON.parse(xhrAdmin.responseText);
-                                let adminData =
-                                    '<table id="adminDataTable"><tr><th>Username</th><th>API Calls</th></tr>';
-                                data.forEach(user => {
-                                    adminData +=
-                                        `<tr><td>${user.username}</td><td>${user.api_calls}</td></tr>`;
-                                });
-                                adminData += '</table>';
-                                bodyContent.innerHTML += '<h2>Admin Data:</h2>' + adminData;
-                            } else {
-                                alert('Failed to fetch admin data: ' + xhrAdmin.responseText);
-                            }
-                        }
-                    };
-                    xhrAdmin.open('GET', 'http://nhi-nguyennn.com/COMP4537/textgenerator/api/admin/data', true);
-                    xhrAdmin.setRequestHeader('Authorization', 'Bearer ' + token);
-                    xhrAdmin.send();
-                }
-            } else {
-                navBar.innerHTML = '<a href="login.html">Login</a>';
-                bodyContent.innerText = 'You need to log in to see the content of the dashboard.';
-            }
-        });
-
-        function fetchStories() {
-            fetch('https://nhi-nguyennn.com/COMP4537/textgenerator/stories', {
-                method: 'GET',
-                credentials: 'include'
-            })
-                .then(response => {
-                    if (!response.ok) throw new Error(response.statusText);
-                    return response.json();
-                })
-                .then(data => {
-                    console.log(data);
-                    alert('Stories fetched successfully.');
-                })
-                .catch(error => {
-                    console.error('Error fetching stories:', error);
-                    alert('Failed to fetch stories.');
-                });
-        }
-
-
-        // Example function to add a new story
-        function addStory(title, content) {
-            fetch('https://nhi-nguyennn.com/COMP4537/textgenerator/addstory', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
-                body: JSON.stringify({
-                    title,
-                    story: content
-                })
-            })
-                .then(response => {
-                    if (!response.ok) throw new Error('Network response was not ok.');
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Story added:', data);
-                })
-                .catch(error => console.error('Error adding story:', error));
-        }
-
-        // Example function to update a story
-        function updateStory(id, title, content) {
-            fetch(`https://nhi-nguyennn.com/COMP4537/textgenerator/updatestory/${id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-
-                },
-                credentials: 'include',
-                body: JSON.stringify({
-                    title,
-                    story: content
-                })
-            })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Story updated:', data);
-                })
-                .catch(error => console.error('Error updating story:', error));
-        }
-
-        // Example function to delete a story
-        function deleteStory(id) {
-            fetch(`https://nhi-nguyennn.com/COMP4537/textgenerator/deletestory/${id}`, {
-                method: 'DELETE',
-                headers: {},
-                credentials: 'include'
-            })
-                .then(response => {
-                    if (!response.ok) throw new Error('Network response was not ok.');
-                    console.log('Story deleted');
-                })
-                .catch(error => console.error('Error deleting story:', error));
-        }
-
-
-
-
-        function getInputValue(inputId) {
-            return document.getElementById(inputId).value;
-        }
-
-        function getSelectedStoryId() {
-            return getInputValue('storyId');
-        }
-    </script>
 </head>
 
 <body>
@@ -162,7 +12,7 @@
         <p></p>
         <a href="login.html">Login</a>
     </nav>
-    <div class="dashboard">
+    <div class="dashboard hidden">
         <h1 id="dashboardTitle"></h1>
         <div>
             <button onclick="fetchStories()">Fetch Stories</button>
@@ -172,7 +22,8 @@
         <div>
             <input type="text" id="storyTitle" placeholder="Story Title">
             <textarea id="storyContent" placeholder="Story Content"></textarea>
-            <button onclick="addStory(getInputValue('storyTitle'), getInputValue('storyContent'))">Add Story</button>
+            <button onclick="addStory(getInputValue('storyTitle'), getInputValue('storyContent'))">Add
+                Story</button>
             <div id="addStoryResponse" class="response"></div>
             <button
                 onclick="updateStory(getSelectedStoryId(), getInputValue('storyTitle'), getInputValue('storyContent'))">Update
@@ -186,6 +37,169 @@
             <div id="deleteStoryResponse" class="response"></div>
         </div>
     </div>
+    <div id="bodyContent">
+    </div>
+    <div id="bodyContent2">
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let username = localStorage.getItem('username');
+            let role = localStorage.getItem('role');
+            let bodyContent = document.getElementById("bodyContent"); // Adjust as needed
+            let bodyContent2 = document.getElementById("bodyContent2"); // Adjust as needed
+            let navBar = document.getElementById("navBar"); // Adjust as needed
+            let dashboard = document.querySelector(".dashboard");
+
+
+            function fetchAdminData1() {
+                // Fetch data from /api/admin/data
+                fetch('https://nhi-nguyennn.com/COMP4537/textgenerator/api/admin/data', {
+                    method: 'GET',
+                    credentials: 'include'
+                })
+                    .then(response => {
+                        if (!response.ok) throw new Error(response.statusText);
+                        return response.json();
+                    })
+                    .then(data => {
+                        let adminData = '<table id="adminDataTable"><tr><th>Endpoint</th><th>Method</th><th>Total Calls</th></tr>';
+                        data.endpointStats.forEach(stat => {
+                            adminData += `<tr><td>${stat.endpoint}</td><td>${stat.method}</td><td>${stat.total_calls}</td></tr>`;
+                        });
+                        adminData += '</table>';
+                        bodyContent.innerHTML += '<h2>API usage by method:</h2>' + adminData;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching admin data:', error);
+                        alert('Failed to fetch admin data.');
+                    });
+            }
+
+            function fetchAdminData2() {
+                // Fetch data from /api/admin/data
+                fetch('https://nhi-nguyennn.com/COMP4537/textgenerator/api/admin/user_usages', {
+                    method: 'GET',
+                    credentials: 'include'
+                })
+                    .then(response => {
+                        if (!response.ok) throw new Error(response.statusText);
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Admin data 2:', data); // Log the data to inspect its structure
+                        let adminData = '<table id="adminDataTable"><tr><th>Username</th><th>API Calls</th></tr>';
+                        data.userUsages.forEach(user => { // Iterate over data.userUsages
+                            adminData += `<tr><td>${user.username}</td><td>${user.api_calls}</td></tr>`;
+                        });
+                        adminData += '</table>';
+                        bodyContent2.innerHTML += '<h2>API usage by users:</h2>' + adminData;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching admin data:', error);
+                        alert('Failed to fetch admin data.');
+                    });
+            }
+            function fetchStories() {
+                fetch('https://nhi-nguyennn.com/COMP4537/textgenerator/stories', {
+                    method: 'GET',
+                    credentials: 'include'
+                })
+                    .then(response => {
+                        if (!response.ok) throw new Error(response.statusText);
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log(data);
+                        alert('Stories fetched successfully.');
+                    })
+                    .catch(error => {
+                        console.error('Error fetching stories:', error);
+                        alert('Failed to fetch stories.');
+                    });
+            }
+            // Example function to add a new story
+            function addStory(title, content) {
+                fetch('https://nhi-nguyennn.com/COMP4537/textgenerator/addstory', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        title,
+                        story: content
+                    })
+                })
+                    .then(response => {
+                        if (!response.ok) throw new Error('Network response was not ok.');
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Story added:', data);
+                    })
+                    .catch(error => console.error('Error adding story:', error));
+            }
+
+            // Example function to update a story
+            function updateStory(id, title, content) {
+                fetch(`https://nhi-nguyennn.com/COMP4537/textgenerator/updatestory/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        title,
+                        story: content
+                    })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Story updated:', data);
+                    })
+                    .catch(error => console.error('Error updating story:', error));
+            }
+
+            // Example function to delete a story
+            function deleteStory(id) {
+                fetch(`https://nhi-nguyennn.com/COMP4537/textgenerator/deletestory/${id}`, {
+                    method: 'DELETE',
+                    headers: {},
+                    credentials: 'include'
+                })
+                    .then(response => {
+                        if (!response.ok) throw new Error('Network response was not ok.');
+                        console.log('Story deleted');
+                    })
+                    .catch(error => console.error('Error deleting story:', error));
+            }
+
+            function getInputValue(inputId) {
+                return document.getElementById(inputId).value;
+            }
+
+            function getSelectedStoryId() {
+                return getInputValue('storyId');
+            }
+
+            if (username && role) {
+                navBar.innerHTML = `
+            <p>Hello, ${username}!</p>
+            <a href="login.html" onclick="localStorage.clear()">Logout</a>
+        `;
+                if (role === 'admin') {
+                    fetchAdminData1();
+                    fetchAdminData2();
+                }
+                dashboard.classList.remove('hidden');
+            } else {
+                navBar.innerHTML = '<a href="login.html">Login</a>';
+                bodyContent.innerText = 'You need to log in to see the content of the dashboard.';
+                dashboard.classList.add('hidden');
+            }
+        });
+    </script>
 </body>
 
 </html>
