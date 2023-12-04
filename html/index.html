@@ -19,18 +19,10 @@
             <input type="text" id="storyTitle" placeholder="Story Title">
             <textarea id="storyContent" placeholder="Story Content"></textarea>
             <button onclick="generateText()">Generate Text</button>
-            <div id="generatedTextResponse" class="response"></div>
-            <button onclick="fetchStories()">Fetch Stories</button>
-            <div id="fetchStoriesResponse" class="response"></div>
             <button onclick="addStory(getInputValue('storyTitle'), getInputValue('storyContent'))">Add Story</button>
             <div id="addStoryResponse" class="response"></div>
-            <button
-                onclick="updateStory(getSelectedStoryId(), getInputValue('storyTitle'), getInputValue('storyContent'))">Update
-                Story</button>
-            <div id="updateStoryResponse" class="response"></div>
-            <input type="number" id="storyId" placeholder="Story ID">
-            <button onclick="deleteStory(getInputValue('storyId'))">Delete Story</button>
-            <div id="deleteStoryResponse" class="response"></div>
+            <button onclick="fetchStories()">Fetch Stories</button>
+            <div id="fetchStoriesResponse" class="response"></div>
         </div>
 
     </div>
@@ -80,7 +72,15 @@
                 })
                 .then(data => {
                     console.log(data);
-                    alert('Stories fetched successfully.');
+                    // Add the id "adminDataTable" to match the styling of the other tables
+                    let table = '<table id="adminDataTable"><tr><th>Story Title</th><th>Story Content</th><th>Actions</th></tr>';
+                    data.forEach(story => {
+                        table += `<tr><td>${story.title}</td><td>${story.story}</td><td>
+            <button onclick="updateStory(${story.id}, '${story.title}', '${story.story}')">Update</button>
+            <button onclick="deleteStory(${story.id})">Delete</button></td></tr>`;
+                    });
+                    table += '</table>';
+                    document.getElementById('fetchStoriesResponse').innerHTML = table;
                 })
                 .catch(error => {
                     console.error('Error fetching stories:', error);
@@ -109,39 +109,55 @@
                 .catch(error => console.error('Error adding story:', error));
         }
 
-        // Example function to update a story
+        // Update story function
         window.updateStory = function (id, title, content) {
-            fetch(`https://nhi-nguyennn.com/COMP4537/textgenerator/updatestory/${id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
+            // Get updated values from the user
+            let newTitle = prompt('Enter new title', title);
+            let newContent = prompt('Enter new content', content);
 
-                },
-                credentials: 'include',
-                body: JSON.stringify({
-                    title,
-                    story: content
+            if (newTitle && newContent) {
+                // Send the PUT request to the server
+                fetch(`https://nhi-nguyennn.com/COMP4537/textgenerator/stories/${id}`, {
+                    method: 'PUT',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        title: newTitle,
+                        story: newContent
+                    })
                 })
-            })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Story updated:', data);
-                })
-                .catch(error => console.error('Error updating story:', error));
+                    .then(response => {
+                        if (!response.ok) throw new Error(response.statusText);
+                        alert('Story updated successfully!');
+                        fetchStories();  // Fetch the updated list of stories
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Failed to update story.');
+                    });
+            } else {
+                alert('Title and content cannot be empty');
+            }
         }
 
-        // Example function to delete a story
+        // Delete story function
         window.deleteStory = function (id) {
-            fetch(`https://nhi-nguyennn.com/COMP4537/textgenerator/deletestory/${id}`, {
+            // Send the DELETE request to the server
+            fetch(`https://nhi-nguyennn.com/COMP4537/textgenerator/stories/${id}`, {
                 method: 'DELETE',
-                headers: {},
                 credentials: 'include'
             })
                 .then(response => {
-                    if (!response.ok) throw new Error('Network response was not ok.');
-                    console.log('Story deleted');
+                    if (!response.ok) throw new Error(response.statusText);
+                    alert('Story deleted successfully!');
+                    fetchStories();  // Fetch the updated list of stories
                 })
-                .catch(error => console.error('Error deleting story:', error));
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to delete story.');
+                });
         }
 
         function getInputValue(inputId) {
