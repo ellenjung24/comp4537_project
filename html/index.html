@@ -69,7 +69,25 @@
                 alert('Failed to generate text.');
             }
         };
-        window.addStory = function(title, content) {
+        window.fetchStories = function () {
+            fetch('https://nhi-nguyennn.com/COMP4537/textgenerator/stories', {
+                method: 'GET',
+                credentials: 'include'
+            })
+                .then(response => {
+                    if (!response.ok) throw new Error(response.statusText);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log(data);
+                    alert('Stories fetched successfully.');
+                })
+                .catch(error => {
+                    console.error('Error fetching stories:', error);
+                    alert('Failed to fetch stories.');
+                });
+        }
+        window.addStory = function (title, content) {
             fetch('https://nhi-nguyennn.com/COMP4537/textgenerator/addstory', {
                 method: 'POST',
                 headers: {
@@ -92,7 +110,7 @@
         }
 
         // Example function to update a story
-        window.updateStory = function(id, title, content) {
+        window.updateStory = function (id, title, content) {
             fetch(`https://nhi-nguyennn.com/COMP4537/textgenerator/updatestory/${id}`, {
                 method: 'PUT',
                 headers: {
@@ -113,7 +131,7 @@
         }
 
         // Example function to delete a story
-        window.deleteStory = function(id) {
+        window.deleteStory = function (id) {
             fetch(`https://nhi-nguyennn.com/COMP4537/textgenerator/deletestory/${id}`, {
                 method: 'DELETE',
                 headers: {},
