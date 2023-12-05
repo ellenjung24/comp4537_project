@@ -72,9 +72,9 @@
                 .then(data => {
                     console.log(data);
                     // Add the id "adminDataTable" to match the styling of the other tables
-                    let table = '<table id="adminDataTable"><tr><th>Story ID</th><th>Story Title</th><th>Story Content</th><th>Actions</th></tr>';
+                    let table = '<table id="adminDataTable"><th>Story Title</th><th>Story Content</th><th>Actions</th></tr>';
                     data.forEach(story => {
-                        table += `<tr><td>${story.storyid}</td><td>${story.title}</td><td>${story.story}</td><td>
+                        table += `<tr><td>${story.title}</td><td>${story.story}</td><td>
             <button onclick="updateStory(${story.storyid}, '${story.title}', '${story.story}')">Update</button>
             <button onclick="deleteStory(${story.storyid})">Delete</button></td></tr>`;
                     });
