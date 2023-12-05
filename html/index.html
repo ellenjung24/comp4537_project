@@ -21,7 +21,6 @@
             <button onclick="generateText()">Generate Text</button>
             <button onclick="addStory(getInputValue('storyTitle'), getInputValue('storyContent'))">Add Story</button>
             <div id="addStoryResponse" class="response"></div>
-            <button onclick="fetchStories()">Fetch Stories</button>
             <div id="fetchStoriesResponse" class="response"></div>
         </div>
 
@@ -73,11 +72,11 @@
                 .then(data => {
                     console.log(data);
                     // Add the id "adminDataTable" to match the styling of the other tables
-                    let table = '<table id="adminDataTable"><tr><th>Story Title</th><th>Story Content</th><th>Actions</th></tr>';
+                    let table = '<table id="adminDataTable"><tr><th>Story ID</th><th>Story Title</th><th>Story Content</th><th>Actions</th></tr>';
                     data.forEach(story => {
-                        table += `<tr><td>${story.title}</td><td>${story.story}</td><td>
-            <button onclick="updateStory(${story.id}, '${story.title}', '${story.story}')">Update</button>
-            <button onclick="deleteStory(${story.id})">Delete</button></td></tr>`;
+                        table += `<tr><td>${story.storyid}</td><td>${story.title}</td><td>${story.story}</td><td>
+            <button onclick="updateStory(${story.storyid}, '${story.title}', '${story.story}')">Update</button>
+            <button onclick="deleteStory(${story.storyid})">Delete</button></td></tr>`;
                     });
                     table += '</table>';
                     document.getElementById('fetchStoriesResponse').innerHTML = table;
@@ -117,7 +116,7 @@
 
             if (newTitle && newContent) {
                 // Send the PUT request to the server
-                fetch(`https://nhi-nguyennn.com/COMP4537/textgenerator/stories/${id}`, {
+                fetch(`https://nhi-nguyennn.com/COMP4537/textgenerator/updatestory/${id}`, {
                     method: 'PUT',
                     credentials: 'include',
                     headers: {
@@ -145,12 +144,17 @@
         // Delete story function
         window.deleteStory = function (id) {
             // Send the DELETE request to the server
-            fetch(`https://nhi-nguyennn.com/COMP4537/textgenerator/stories/${id}`, {
+            fetch(`https://nhi-nguyennn.com/COMP4537/textgenerator/deletestory/${id}`, {
                 method: 'DELETE',
                 credentials: 'include'
             })
                 .then(response => {
-                    if (!response.ok) throw new Error(response.statusText);
+                    if (!response.ok) {
+                        return response.text().then(errorText => {
+                            // Throw new error with status and text
+                            throw new Error(`Error ${response.status}: ${errorText}`);
+                        });
+                    }
                     alert('Story deleted successfully!');
                     fetchStories();  // Fetch the updated list of stories
                 })
@@ -231,6 +235,15 @@
                 if (role === 'admin') {
                     fetchAdminData1();
                     fetchAdminData2();
+
+                    // Create fetchStories button if the user is an admin
+                    let fetchStoriesButton = document.createElement('button');
+                    fetchStoriesButton.innerHTML = 'Fetch Stories';
+                    fetchStoriesButton.onclick = fetchStories;
+
+                    // Append the fetchStories button to the dashboard div
+                    let dashboardDiv = document.querySelector('.dashboard div');
+                    dashboardDiv.appendChild(fetchStoriesButton);
                 }
                 dashboard.classList.remove('hidden');
             } else {
