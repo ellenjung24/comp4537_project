@@ -230,8 +230,27 @@
             if (username && role) {
                 navBar.innerHTML = `
             <p>Hello, ${username}!</p>
-            <a href="login.html" onclick="localStorage.clear()">Logout</a>
+            <a href="#" id="logoutButton">Logout</a>
         `;
+                // Add event listener for logout button
+                const logoutButton = document.getElementById('logoutButton');
+                logoutButton.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    fetch('https://nhi-nguyennn.com/COMP4537/textgenerator/logout', {
+                        method: 'GET',
+                        credentials: 'include'
+                    })
+                        .then(response => {
+                            if (!response.ok) throw new Error(response.statusText);
+                            // Clear local storage and refresh page after successful logout
+                            localStorage.clear();
+                            location.reload();
+                        })
+                        .catch(error => {
+                            console.error('Error logging out:', error);
+                            alert('Failed to log out.');
+                        });
+                });
                 if (role === 'admin') {
                     fetchAdminData1();
                     fetchAdminData2();
