@@ -20,6 +20,7 @@
             <textarea id="storyContent" placeholder="Story Content"></textarea>
             <button onclick="generateText()">Generate Text</button>
             <button onclick="addStory(getInputValue('storyTitle'), getInputValue('storyContent'))">Add Story</button>
+            <button onclick="fetchStories()">Fetch Stories</button>
             <div id="addStoryResponse" class="response"></div>
             <div id="fetchStoriesResponse" class="response"></div>
         </div>
@@ -47,7 +48,16 @@
                     }),
                 });
 
-                if (!response.ok) throw new Error(response.statusText);
+                if (response.status === 429) {
+                    alert('API usage limit reached.');
+                    return;
+                }
+
+                if (!response.ok) {
+                    alert('Failed to generate text.');
+                    return;
+                }
+
                 const data = await response.json();
                 console.log(data);
 
@@ -57,7 +67,7 @@
                 alert('Text generated successfully.');
             } catch (error) {
                 console.error('Error generating text:', error);
-                alert('Failed to generate text.');
+                alert('An unexpected error occurred.');
             }
         };
         window.fetchStories = function () {
@@ -255,14 +265,14 @@
                     fetchAdminData1();
                     fetchAdminData2();
 
-                    // Create fetchStories button if the user is an admin
-                    let fetchStoriesButton = document.createElement('button');
-                    fetchStoriesButton.innerHTML = 'Fetch Stories';
-                    fetchStoriesButton.onclick = fetchStories;
+                    // // Create fetchStories button if the user is an admin
+                    // let fetchStoriesButton = document.createElement('button');
+                    // fetchStoriesButton.innerHTML = 'Fetch Stories';
+                    // fetchStoriesButton.onclick = fetchStories;
 
-                    // Append the fetchStories button to the dashboard div
-                    let dashboardDiv = document.querySelector('.dashboard div');
-                    dashboardDiv.appendChild(fetchStoriesButton);
+                    // // Append the fetchStories button to the dashboard div
+                    // let dashboardDiv = document.querySelector('.dashboard div');
+                    // dashboardDiv.appendChild(fetchStoriesButton);
                 }
                 dashboard.classList.remove('hidden');
             } else {
